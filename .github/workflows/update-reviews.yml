@@ -2,8 +2,8 @@ name: Update Reviews Feed
 
 on:
   schedule:
-    - cron: '0 * * * *'  # This will run the workflow every hour, you can adjust it.
-  workflow_dispatch:  # This allows manual triggering from GitHub UI.
+    - cron: '0 * * * *'  # Runs every hour (adjust as needed)
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
 
 jobs:
   update-reviews:
@@ -14,22 +14,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Node.js (or you can use curl or wget to fetch the JSON directly)
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      # Step 3: Fetch the JSON data from the GAS URL and save it
+      # Step 2: Fetch the JSON data from GAS
       - name: Fetch reviews JSON from GAS
         run: |
           curl -o reviews_feed.json "https://script.google.com/macros/s/AKfycbyOMSXiUHM6B84k6MxPraWxYaOo0SYV3Py8HsyMXWHLMLX8sC34jcHFhJsrVLp23k8/exec"
-          
-      # Step 4: Commit the changes (new reviews feed) to the repository
+
+      # Step 3: Configure git and authenticate using the GitHub token
+      - name: Configure git user
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
       - name: Commit and push the updated feed
         run: |
-          git config --local user.name "GitHub Actions"
-          git config --local user.email "actions@github.com"
           git add reviews_feed.json
           git commit -m "Update reviews feed"
           git push
+        env:
+          # Set the token to authenticate the GitHub Actions bot
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
