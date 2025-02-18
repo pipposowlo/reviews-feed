@@ -1,9 +1,6 @@
 name: Update Reviews Feed
 
-on:
-  schedule:
-    - cron: '0 * * * *'  # Runs every hour (adjust as needed)
-  workflow_dispatch:  # Allows manual triggering from GitHub UI
+
 
 jobs:
   update-reviews:
